@@ -1,0 +1,24 @@
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+### Migrations fields ###
+# migrations/*
+
+theme/
+node_modules/
+celerybeat-schedule
+celerybeat.pid
+package-lock.json
+ssh_with_tunneling.py
+start.sh
+.vscode/
+
+db.sqlite*
+*db.sqlite3
+
+# config/local_settings.py
+offline-packages/
+logs/*
+db/*
