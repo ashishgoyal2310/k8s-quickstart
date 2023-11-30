@@ -1,0 +1,6 @@
+flask-restful==0.3.9
+webargs==8.3.0
+requests==2.29.0
+celery==5.3.6
+redis==5.0.1
+pypiwin32
