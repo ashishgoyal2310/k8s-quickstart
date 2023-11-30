@@ -5,6 +5,7 @@ python main.py
 celery -A main worker --loglevel INFO
 celery -A main beat --loglevel INFO
 """
+import logging
 import uuid
 from functools import wraps
 
@@ -20,6 +21,9 @@ from marshmallow.utils import missing
 
 from config import create_app
 from tasks import send_register_email
+
+logging_format ='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+logging.basicConfig(filename='server.log', encoding='utf-8', format=logging_format, level=logging.INFO)
 
 
 flask_app = create_app()
@@ -83,12 +87,25 @@ def handle_authentication(func):
     return wrapper
 
 
+def handle_logging(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        logging.info("%s - %s - %s" % (request.method, request.path, request.data))
+
+        return func(*args, **kwargs)
+    return wrapper
+
+
 class HelloWorld(Resource):
+    method_decorators = [handle_logging]
+
     def get(self):
         return {'hello': 'world'}
 
 
 class UserRegister(Resource):
+    method_decorators = [handle_logging]
+
     def post(self):
         params = parser.load_json(request, schema=Schema.from_dict({}))
         username = params.get("username")
@@ -105,7 +122,7 @@ class UserRegister(Resource):
         )
         result = send_register_email.delay(username)
         response.update({
-            "result_id": result.id,
+            "result_id": str(result),
             "detail": "register success."         
         })
 
@@ -114,7 +131,7 @@ class UserRegister(Resource):
 
 class ApiWebhook(Resource):
     # method_decorators = [handle_authentication]
-    method_decorators = {'post': [handle_authentication]}
+    method_decorators = {'post': [handle_logging, handle_authentication]}
 
     def post(self):
         params = parser.load_json(request, schema=Schema.from_dict({}))

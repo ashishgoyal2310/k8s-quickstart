@@ -21,4 +21,8 @@ db.sqlite*
 # config/local_settings.py
 offline-packages/
 logs/*
+*/logs*
+control*
+*/control*
 db/*
+*.log

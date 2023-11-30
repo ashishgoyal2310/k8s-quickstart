@@ -11,11 +11,14 @@ from flask import Flask
 from celery import Celery, Task
 from pathlib import Path
 
+DEBUG = os.environ.get('DEBUG', None)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-print("BASE_DIR: ", BASE_DIR)
+print("DEBUG: %s BASE_DIR: %s" % (DEBUG, BASE_DIR))
 
 def get_celery_config():
     REDIS_HOST = os.environ.get('REDIS_HOST', None)
+    print("DEBUG: %s REDIS_HOST: %s" % (DEBUG, REDIS_HOST))
+
     if REDIS_HOST:
         return dict(
             broker_url="redis://{}:6379/0".format(REDIS_HOST),
